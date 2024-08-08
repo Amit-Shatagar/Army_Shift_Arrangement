@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Army_Shift_Arrangement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        #output-table {
+            margin-top: 20px;
+        }
+        .delete-btn, .modify-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .modify-btn {
+            background-color: blue;
+        }
+        .delete-btn:hover, .modify-btn:hover {
+            opacity: 0.8;
+        }
+    </style>
+    <script>
+        function calculateTotal() {
+            let totalMembers = document.querySelectorAll('.member-input');
+            let totalCount = 0;
+            totalMembers.forEach(input => {
+                if (input.value.trim() !== "") {
+                    totalCount++;
+                }
+            });
+
+            // Count team leaders as well
+            let teamLeaders = document.querySelectorAll('input[placeholder="Team Leader"]');
+            teamLeaders.forEach(input => {
+                if (input.value.trim() !== "") {
+                    totalCount++;
+                }
+            });
+
+            document.getElementById('total-members').innerText = totalCount;
+        }
+
+        function submitData() {
+            const rows = document.querySelectorAll('#input-table tr');
+            const outputTable = document.getElementById('output-table-body');
+            outputTable.innerHTML = '';
+
+            rows.forEach((row, index) => {
+                if (index > 1 && index < rows.length - 1) {
+                    const newRow = document.createElement('tr');
+                    row.querySelectorAll('td').forEach(cell => {
+                        const newCell = document.createElement('td');
+                        newCell.innerHTML = Array.from(cell.querySelectorAll('input')).map(input => input.value).join('<br>');
+                        newRow.appendChild(newCell);
+                    });
+                    const modifyCell = document.createElement('td');
+                    modifyCell.innerHTML = `<button class="modify-btn" onclick="modifyRow(this)">Modify</button>`;
+                    newRow.appendChild(modifyCell);
+                    outputTable.appendChild(newRow);
+                }
+            });
+
+            const totalMembersCount = document.getElementById('total-members').innerText;
+            document.getElementById('output-total-members').innerText = totalMembersCount;
+        }
+
+        function takePicture() {
+            html2canvas(document.querySelector("#output-table")).then(canvas => {
+                let link = document.createElement('a');
+                link.download = 'table.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        function modifyRow(button) {
+            const row = button.closest('tr');
+            const cells = row.querySelectorAll('td');
+            cells.forEach((cell, index) => {
+                if (index < cells.length - 1) { // Skip the last cell (Action button)
+                    const inputValues = cell.innerHTML.split('<br>').map(value => value.trim());
+                    cell.innerHTML = inputValues.map(value => `<input type="text" value="${value}" oninput="calculateTotal()">`).join('<br>');
+                }
+            });
+            button.innerHTML = 'Save';
+            button.setAttribute('onclick', 'saveRow(this)');
+        }
+
+        function saveRow(button) {
+            const row = button.closest('tr');
+            const cells = row.querySelectorAll('td');
+            cells.forEach((cell, index) => {
+                if (index < cells.length - 1) { // Skip the last cell (Action button)
+                    const inputValues = Array.from(cell.querySelectorAll('input')).map(input => input.value);
+                    cell.innerHTML = inputValues.join('<br>');
+                }
+            });
+            button.innerHTML = 'Modify';
+            button.setAttribute('onclick', 'modifyRow(this)');
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <table id="input-table">
+        <tr>
+            <th colspan="5">Input "TABLE HEADER"</th>
+        </tr>
+        <tr>
+            <th>Details</th>
+            <th>Shift A<br>NIGHT SHIFT</th>
+            <th>Shift B<br>AFTERNOON SHIFT</th>
+            <th>Shift C<br>MORNING SHIFT</th>
+            <th>General Shift</th>
+        </tr>
+        <tr>
+            <td>F/Stn No. 01</td>
+            <td>
+                <input type="text" placeholder="Team Leader" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()">
+            </td>
+            <td>
+                <input type="text" placeholder="Team Leader" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()">
+            </td>
+            <td>
+                <input type="text" placeholder="Team Leader" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()">
+            </td>
+            <td>
+                WOIC Fire Section<br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                Office Work:<br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()">
+            </td>
+        </tr>
+        <tr>
+            <td>F/Stn No. 02</td>
+            <td>
+                <input type="text" placeholder="Team Leader" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()">
+            </td>
+            <td>
+                <input type="text" placeholder="Team Leader" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()">
+            </td>
+            <td>
+                <input type="text" placeholder="Team Leader" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()">
+            </td>
+            <td>
+                MI TEAM:<br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()">
+            </td>
+        </tr>
+                <tr>
+            <td>F/Stn No. 03</td>
+            <td>
+                <input type="text" placeholder="Team Leader" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()">
+            </td>
+            <td>
+                <input type="text" placeholder="Team Leader" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()">
+            </td>
+            <td>
+                <input type="text" placeholder="Team Leader" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()">
+            </td>
+            <td>
+                TD:<br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()"><br>
+                <input type="text" class="member-input" placeholder="Member" oninput="calculateTotal()">
+            </td>
+        </tr>
+        <tr>
+            <td>Total members:</td>
+            <td>Total members:</td>
+            <td>Total members:</td>
+            <td>Total members:</td>
+            <td id="total-members">TOTAL:</td>
+        </tr>
+    </table>
+    <button onclick="submitData()">Submit</button>
+
+    <table id="output-table">
+        <thead>
+            <tr>
+                <th>Details</th>
+                <th>Shift A<br>NIGHT SHIFT</th>
+                <th>Shift B<br>AFTERNOON SHIFT</th>
+                <th>Shift C<br>MORNING SHIFT</th>
+                <th>General Shift</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="output-table-body">
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>Total members:</td>
+                <td colspan="5" id="output-total-members"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <button onclick="takePicture()">Take Picture</button>
+</body>
+</html>
